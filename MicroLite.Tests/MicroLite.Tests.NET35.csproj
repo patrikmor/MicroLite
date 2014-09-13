@@ -73,6 +73,8 @@
     <Compile Include="Dialect\MsSql2012DialectTests.cs" />
     <Compile Include="Dialect\MySqlCharactersTests.cs" />
     <Compile Include="Dialect\MySqlDialectTests.cs" />
+    <Compile Include="Dialect\OracleSqlCharactersTests.cs" />
+    <Compile Include="Dialect\OracleSqlDialectTests.cs" />
     <Compile Include="Dialect\PostgreSqlCharactersTests.cs" />
     <Compile Include="Dialect\PostgreSqlDialectTests.cs" />
     <Compile Include="Dialect\SqlServerCeCharactersTests.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Driver\FirebirdDbDriverTests.cs" />
     <Compile Include="Driver\MsSqlDbDriverTests.cs" />
     <Compile Include="Driver\MySqlDbDriverTests.cs" />
+    <Compile Include="Driver\OracleDbDriverTests.cs" />
     <Compile Include="Driver\PostgreSqlDbDriverTests.cs" />
     <Compile Include="Driver\SqlServerCeDbDriverTests.cs" />
     <Compile Include="Driver\SQLiteDbDriverTests.cs" />

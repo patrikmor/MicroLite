@@ -70,6 +70,8 @@
     <Compile Include="Dialect\MsSql2012Dialect.cs" />
     <Compile Include="Dialect\MySqlCharacters.cs" />
     <Compile Include="Dialect\MySqlDialect.cs" />
+    <Compile Include="Dialect\OracleSqlCharacters.cs" />
+    <Compile Include="Dialect\OracleSqlDialect.cs" />
     <Compile Include="Dialect\PostgreSqlCharacters.cs" />
     <Compile Include="Dialect\PostgreSqlDialect.cs" />
     <Compile Include="Dialect\SqlServerCeCharacters.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="Dialect\SQLiteCharacters.cs" />
     <Compile Include="Dialect\SQLiteDialect.cs" />
     <Compile Include="Driver\FirebirdDbDriver.cs" />
+    <Compile Include="Driver\OracleDbDriver.cs" />
     <Compile Include="Driver\SqlServerCeDbDriver.cs" />
     <Compile Include="Driver\SQLiteDbDriver.cs" />
     <Compile Include="Driver\PostgreSqlDbDriver.cs" />

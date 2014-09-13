@@ -163,6 +163,36 @@
             }
         }
 
+        public class WhenCallingForOracleConnection
+        {
+            private readonly Mock<IConfigureConnection> mockConfigureConnection = new Mock<IConfigureConnection>();
+
+            public WhenCallingForOracleConnection()
+            {
+                ConfigurationExtensions.ForOracleConnection(this.mockConfigureConnection.Object, "TestConnection");
+            }
+
+            [Fact]
+            public void ForConnectionIsCalledWithAnInstanceOfTheSqlDialectAndDbDriver()
+            {
+                this.mockConfigureConnection.Verify(
+                    x => x.ForConnection("TestConnection", It.IsNotNull<OracleSqlDialect>(), It.IsNotNull<OracleDbDriver>()),
+                    Times.Once());
+            }
+        }
+
+        public class WhenCallingForOracleConnection_AndTheConfigureConnectionIsNull
+        {
+            [Fact]
+            public void AnArgumentNullExceptionIsThrown()
+            {
+                var exception = Assert.Throws<ArgumentNullException>(
+                    () => ConfigurationExtensions.ForOracleConnection(null, "TestConnection"));
+
+                Assert.Equal("configureConnection", exception.ParamName);
+            }
+        }
+
         public class WhenCallingForPostgreSqlConnection
         {
             private readonly Mock<IConfigureConnection> mockConfigureConnection = new Mock<IConfigureConnection>();
