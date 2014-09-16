@@ -75,6 +75,8 @@
     <Compile Include="Dialect\SqlServerCeDialect.cs" />
     <Compile Include="Dialect\SQLiteCharacters.cs" />
     <Compile Include="Dialect\SQLiteDialect.cs" />
+    <Compile Include="Dialect\SybaseSqlCharacters.cs" />
+    <Compile Include="Dialect\SybaseSqlDialect.cs" />
     <Compile Include="Driver\FirebirdDbDriver.cs" />
     <Compile Include="Driver\SqlServerCeDbDriver.cs" />
     <Compile Include="Driver\SQLiteDbDriver.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Driver\MsSqlDbDriver.cs" />
     <Compile Include="Driver\DbDriver.cs" />
     <Compile Include="Driver\MySqlDbDriver.cs" />
+    <Compile Include="Driver\SybaseDbDriver.cs" />
     <Compile Include="ExceptionMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

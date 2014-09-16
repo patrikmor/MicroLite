@@ -81,6 +81,8 @@
     <Compile Include="Dialect\SqlServerCeDialectTests.cs" />
     <Compile Include="Dialect\SQLiteCharactersTests.cs" />
     <Compile Include="Dialect\SQLiteDialectTests.cs" />
+    <Compile Include="Dialect\SybaseSqlCharactersTests.cs" />
+    <Compile Include="Dialect\SybaseSqlDialectTests.cs" />
     <Compile Include="Driver\DbDriverTests.cs" />
     <Compile Include="Driver\FirebirdDbDriverTests.cs" />
     <Compile Include="Driver\MsSqlDbDriverTests.cs" />
@@ -88,6 +90,7 @@
     <Compile Include="Driver\PostgreSqlDbDriverTests.cs" />
     <Compile Include="Driver\SqlServerCeDbDriverTests.cs" />
     <Compile Include="Driver\SQLiteDbDriverTests.cs" />
+    <Compile Include="Driver\SybaseDbDriverTests.cs" />
     <Compile Include="Mapping\Inflection\InflectionServiceTests.cs" />
     <Compile Include="Mapping\PocoObjectInfoTests.cs" />
     <Compile Include="Mapping\TupleObjectInfoTests.cs" />

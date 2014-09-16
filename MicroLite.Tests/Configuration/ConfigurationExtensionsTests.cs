@@ -253,6 +253,36 @@
             }
         }
 
+        public class WhenCallingForSybaseConnection
+        {
+            private readonly Mock<IConfigureConnection> mockConfigureConnection = new Mock<IConfigureConnection>();
+
+            public WhenCallingForSybaseConnection()
+            {
+                ConfigurationExtensions.ForSybaseConnection(this.mockConfigureConnection.Object, "TestConnection");
+            }
+
+            [Fact]
+            public void ForConnectionIsCalledWithAnInstanceOfTheSqlDialectAndDbDriver()
+            {
+                this.mockConfigureConnection.Verify(
+                    x => x.ForConnection("TestConnection", It.IsNotNull<SybaseSqlDialect>(), It.IsNotNull<SybaseDbDriver>()),
+                    Times.Once());
+            }
+        }
+
+        public class WhenCallingForSybaseConnection_AndTheConfigureConnectionIsNull
+        {
+            [Fact]
+            public void AnArgumentNullExceptionIsThrown()
+            {
+                var exception = Assert.Throws<ArgumentNullException>(
+                    () => ConfigurationExtensions.ForSybaseConnection(null, "TestConnection"));
+
+                Assert.Equal("configureConnection", exception.ParamName);
+            }
+        }
+
         public class WhenCallingWithAttributeBasedMapping
         {
             private readonly Mock<IConfigureExtensions> mockConfigureExtensions = new Mock<IConfigureExtensions>();
