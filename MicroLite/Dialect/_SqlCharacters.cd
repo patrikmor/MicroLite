@@ -15,28 +15,28 @@
     </TypeIdentifier>
   </Class>
   <Class Name="MicroLite.Dialect.PostgreSqlCharacters">
-    <Position X="11.5" Y="5.75" Width="2.75" />
+    <Position X="12" Y="5.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAAGAAAAAAAAAAAAAAAgAAAAAQAAAAAAAABA=</HashCode>
       <FileName>Dialect\PostgreSqlCharacters.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MicroLite.Dialect.SQLiteCharacters">
-    <Position X="14.5" Y="5.75" Width="2.25" />
+    <Position X="15" Y="5.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAACAAAAAAAAAAAAAAAgAAAAAQAAAAAAAABA=</HashCode>
       <FileName>Dialect\SQLiteCharacters.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MicroLite.SqlCharacters">
-    <Position X="6.5" Y="0.5" Width="2.75" />
+    <Position X="9" Y="0.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAAGAAAAAAAKAQAACiAgAAAAAIgAAAgAQABA=</HashCode>
       <FileName>SqlCharacters.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MicroLite.Dialect.SqlServerCeCharacters">
-    <Position X="17" Y="5.75" Width="2.25" />
+    <Position X="17.5" Y="5.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAACAAAAAAAAAAAAAAAgAAAAAQAAAAAAAABA=</HashCode>
       <FileName>Dialect\SqlServerCeCharacters.cs</FileName>
@@ -50,9 +50,9 @@
     </TypeIdentifier>
   </Class>
   <Class Name="MicroLite.Dialect.OracleSqlCharacters">
-    <Position X="9" Y="5.75" Width="2.25" />
+    <Position X="9" Y="5.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAACAAAAAAAAAAAAAAAgAAAAAQAAAAAAAABA=</HashCode>
+      <HashCode>AAAAAAgAAAGAAAAAAAAAAAAAAAgAAAAAQAAAAAAAABA=</HashCode>
       <FileName>Dialect\OracleSqlCharacters.cs</FileName>
     </TypeIdentifier>
   </Class>

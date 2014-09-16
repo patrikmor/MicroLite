@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="MicroLite.Dialect.SqlDialect">
-    <Position X="5.25" Y="0.5" Width="2.75" />
+    <Position X="7.25" Y="0.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAsAAQABAAAAAAAgIAAwQAQAAAEAABAAAAAQAAAAAAA=</HashCode>
       <FileName>Dialect\SqlDialect.cs</FileName>
@@ -60,7 +60,7 @@
   <Class Name="MicroLite.Dialect.OracleSqlDialect">
     <Position X="5.5" Y="6" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Dialect\OracleSqlDialect.cs</FileName>
     </TypeIdentifier>
   </Class>
