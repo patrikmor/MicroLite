@@ -16,5 +16,35 @@
 
             Assert.Same(characters1, characters2);
         }
+
+        [Fact]
+        public void LeftDelimiterReturnsCorrectValue()
+        {
+            Assert.Equal("\"", SybaseSqlCharacters.Instance.LeftDelimiter);
+        }
+
+        [Fact]
+        public void RightDelimiterReturnsCorrectValue()
+        {
+            Assert.Equal("\"", SybaseSqlCharacters.Instance.RightDelimiter);
+        }
+
+        [Fact]
+        public void SqlParameterReturnsColon()
+        {
+            Assert.Equal(":", SybaseSqlCharacters.Instance.SqlParameter);
+        }
+
+        [Fact]
+        public void StoredProcedureInvocationCommandReturnsExec()
+        {
+            Assert.Equal("EXEC", SybaseSqlCharacters.Instance.StoredProcedureInvocationCommand);
+        }
+
+        [Fact]
+        public void SupportsNamedParametersReturnsTrue()
+        {
+            Assert.True(SybaseSqlCharacters.Instance.SupportsNamedParameters);
+        }
     }
 }

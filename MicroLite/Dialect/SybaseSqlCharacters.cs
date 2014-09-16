@@ -28,5 +28,60 @@ namespace MicroLite.Dialect
         private SybaseSqlCharacters()
         {
         }
+
+        /// <summary>
+        /// Gets the left delimiter character.
+        /// </summary>
+        public override string LeftDelimiter
+        {
+            get
+            {
+                return "\"";
+            }
+        }
+
+        /// <summary>
+        /// Gets the right delimiter character.
+        /// </summary>
+        public override string RightDelimiter
+        {
+            get
+            {
+                return "\"";
+            }
+        }
+
+        /// <summary>
+        /// Gets the SQL parameter.
+        /// </summary>
+        public override string SqlParameter
+        {
+            get
+            {
+                return ":";
+            }
+        }
+
+        /// <summary>
+        /// Gets the stored procedure invocation command.
+        /// </summary>
+        public override string StoredProcedureInvocationCommand
+        {
+            get
+            {
+                return "EXEC";
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether SQL parameters are named.
+        /// </summary>
+        public override bool SupportsNamedParameters
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }
