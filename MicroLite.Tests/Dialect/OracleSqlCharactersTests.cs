@@ -16,5 +16,35 @@
 
             Assert.Same(characters1, characters2);
         }
+
+        [Fact]
+        public void LeftDelimiterReturnsCorrectValue()
+        {
+            Assert.Equal("\"", OracleSqlCharacters.Instance.LeftDelimiter);
+        }
+
+        [Fact]
+        public void RightDelimiterReturnsCorrectValue()
+        {
+            Assert.Equal("\"", OracleSqlCharacters.Instance.RightDelimiter);
+        }
+
+        [Fact]
+        public void SqlParameterReturnsColon()
+        {
+            Assert.Equal(":", OracleSqlCharacters.Instance.SqlParameter);
+        }
+
+        [Fact]
+        public void StoredProcedureInvocationCommandReturnsCall()
+        {
+            Assert.Equal("CALL", OracleSqlCharacters.Instance.StoredProcedureInvocationCommand);
+        }
+
+        [Fact]
+        public void SupportsNamedParametersReturnsTrue()
+        {
+            Assert.True(OracleSqlCharacters.Instance.SupportsNamedParameters);
+        }
     }
 }
