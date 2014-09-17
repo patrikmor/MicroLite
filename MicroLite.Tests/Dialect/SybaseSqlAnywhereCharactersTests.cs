@@ -4,15 +4,15 @@
     using Xunit;
 
     /// <summary>
-    /// Unit Tests for the <see cref="SybaseSqlCharacters"/> class.
+    /// Unit Tests for the <see cref="SybaseSqlAnywhereCharacters"/> class.
     /// </summary>
-    public class SybaseSqlCharactersTests
+    public class SybaseSqlAnywhereCharactersTests
     {
         [Fact]
         public void InstanceReturnsTheSameInstanceEachTime()
         {
-            var characters1 = SybaseSqlCharacters.Instance;
-            var characters2 = SybaseSqlCharacters.Instance;
+            var characters1 = SybaseSqlAnywhereCharacters.Instance;
+            var characters2 = SybaseSqlAnywhereCharacters.Instance;
 
             Assert.Same(characters1, characters2);
         }
@@ -20,31 +20,31 @@
         [Fact]
         public void LeftDelimiterReturnsCorrectValue()
         {
-            Assert.Equal("\"", SybaseSqlCharacters.Instance.LeftDelimiter);
+            Assert.Equal("\"", SybaseSqlAnywhereCharacters.Instance.LeftDelimiter);
         }
 
         [Fact]
         public void RightDelimiterReturnsCorrectValue()
         {
-            Assert.Equal("\"", SybaseSqlCharacters.Instance.RightDelimiter);
+            Assert.Equal("\"", SybaseSqlAnywhereCharacters.Instance.RightDelimiter);
         }
 
         [Fact]
         public void SqlParameterReturnsColon()
         {
-            Assert.Equal(":", SybaseSqlCharacters.Instance.SqlParameter);
+            Assert.Equal(":", SybaseSqlAnywhereCharacters.Instance.SqlParameter);
         }
 
         [Fact]
         public void StoredProcedureInvocationCommandReturnsExec()
         {
-            Assert.Equal("EXEC", SybaseSqlCharacters.Instance.StoredProcedureInvocationCommand);
+            Assert.Equal("EXEC", SybaseSqlAnywhereCharacters.Instance.StoredProcedureInvocationCommand);
         }
 
         [Fact]
         public void SupportsNamedParametersReturnsTrue()
         {
-            Assert.True(SybaseSqlCharacters.Instance.SupportsNamedParameters);
+            Assert.True(SybaseSqlAnywhereCharacters.Instance.SupportsNamedParameters);
         }
     }
 }

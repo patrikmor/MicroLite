@@ -79,8 +79,8 @@
     <Compile Include="Dialect\SqlServerCeDialectTests.cs" />
     <Compile Include="Dialect\SQLiteCharactersTests.cs" />
     <Compile Include="Dialect\SQLiteDialectTests.cs" />
-    <Compile Include="Dialect\SybaseSqlCharactersTests.cs" />
-    <Compile Include="Dialect\SybaseSqlDialectTests.cs" />
+    <Compile Include="Dialect\SybaseSqlAnywhereCharactersTests.cs" />
+    <Compile Include="Dialect\SybaseSqlAnywhereDialectTests.cs" />
     <Compile Include="Driver\DbDriverTests.cs" />
     <Compile Include="Driver\FirebirdDbDriverTests.cs" />
     <Compile Include="Driver\MsSqlDbDriverTests.cs" />

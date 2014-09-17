@@ -253,31 +253,31 @@
             }
         }
 
-        public class WhenCallingForSybaseConnection
+        public class WhenCallingForSybaseSqlAnywhereConnection
         {
             private readonly Mock<IConfigureConnection> mockConfigureConnection = new Mock<IConfigureConnection>();
 
-            public WhenCallingForSybaseConnection()
+            public WhenCallingForSybaseSqlAnywhereConnection()
             {
-                ConfigurationExtensions.ForSybaseConnection(this.mockConfigureConnection.Object, "TestConnection");
+                ConfigurationExtensions.ForSybaseSqlAnywhereConnection(this.mockConfigureConnection.Object, "TestConnection");
             }
 
             [Fact]
             public void ForConnectionIsCalledWithAnInstanceOfTheSqlDialectAndDbDriver()
             {
                 this.mockConfigureConnection.Verify(
-                    x => x.ForConnection("TestConnection", It.IsNotNull<SybaseSqlDialect>(), It.IsNotNull<SybaseDbDriver>()),
+                    x => x.ForConnection("TestConnection", It.IsNotNull<SybaseSqlAnywhereDialect>(), It.IsNotNull<SybaseDbDriver>()),
                     Times.Once());
             }
         }
 
-        public class WhenCallingForSybaseConnection_AndTheConfigureConnectionIsNull
+        public class WhenCallingForSybaseSqlAnywhereConnection_AndTheConfigureConnectionIsNull
         {
             [Fact]
             public void AnArgumentNullExceptionIsThrown()
             {
                 var exception = Assert.Throws<ArgumentNullException>(
-                    () => ConfigurationExtensions.ForSybaseConnection(null, "TestConnection"));
+                    () => ConfigurationExtensions.ForSybaseSqlAnywhereConnection(null, "TestConnection"));
 
                 Assert.Equal("configureConnection", exception.ParamName);
             }

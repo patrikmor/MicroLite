@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SybaseSqlDialect.cs" company="MicroLite">
+// <copyright file="SybaseSqlAnywhereDialect.cs" company="MicroLite">
 // Copyright 2012 - 2014 Project Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +17,15 @@ namespace MicroLite.Dialect
     /// <summary>
     /// The implementation of <see cref="ISqlDialect"/> for Sybase.
     /// </summary>
-    internal sealed class SybaseSqlDialect : SqlDialect
+    internal sealed class SybaseSqlAnywhereDialect : SqlDialect
     {
         private static readonly SqlQuery selectIdentityQuery = new SqlQuery("SELECT @@IDENTITY");
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SybaseSqlDialect"/> class.
+        /// Initialises a new instance of the <see cref="SybaseSqlAnywhereDialect"/> class.
         /// </summary>
-        internal SybaseSqlDialect()
-            : base(SybaseSqlCharacters.Instance)
+        internal SybaseSqlAnywhereDialect()
+            : base(SybaseSqlAnywhereCharacters.Instance)
         {
         }
 

@@ -7,14 +7,14 @@
     using Xunit;
 
     /// <summary>
-    /// Unit Tests for the <see cref="SybaseSqlDialect"/> class.
+    /// Unit Tests for the <see cref="SybaseSqlAnywhereDialect"/> class.
     /// </summary>
-    public class SybaseSqlDialectTests : UnitTest
+    public class SybaseSqlAnywhereDialectTests : UnitTest
     {
         [Fact]
         public void BuildSelectInsertIdSqlQuery()
         {
-            var sqlDialect = new SybaseSqlDialect();
+            var sqlDialect = new SybaseSqlAnywhereDialect();
 
             var sqlQuery = sqlDialect.BuildSelectInsertIdSqlQuery(ObjectInfo.For(typeof(Customer)));
 
@@ -40,7 +40,7 @@
                 Website = new Uri("http://microliteorm.wordpress.com")
             };
 
-            var sqlDialect = new SybaseSqlDialect();
+            var sqlDialect = new SybaseSqlAnywhereDialect();
 
             var sqlQuery = sqlDialect.BuildInsertSqlQuery(ObjectInfo.For(typeof(Customer)), customer);
 
@@ -73,7 +73,7 @@
                 Website = new Uri("http://microliteorm.wordpress.com")
             };
 
-            var sqlDialect = new SybaseSqlDialect();
+            var sqlDialect = new SybaseSqlAnywhereDialect();
 
             var sqlQuery = sqlDialect.BuildInsertSqlQuery(ObjectInfo.For(typeof(Customer)), customer);
 
@@ -90,7 +90,7 @@
         [Fact]
         public void SupportsSelectInsertedIdentifierReturnsTrue()
         {
-            var sqlDialect = new SybaseSqlDialect();
+            var sqlDialect = new SybaseSqlAnywhereDialect();
 
             Assert.True(sqlDialect.SupportsSelectInsertedIdentifier);
         }
@@ -113,7 +113,7 @@
                 Website = new Uri("http://microliteorm.wordpress.com")
             };
 
-            var sqlDialect = new SybaseSqlDialect();
+            var sqlDialect = new SybaseSqlAnywhereDialect();
 
             var sqlQuery = sqlDialect.BuildUpdateSqlQuery(ObjectInfo.For(typeof(Customer)), customer);
 
@@ -146,7 +146,7 @@
                 Website = new Uri("http://microliteorm.wordpress.com")
             };
 
-            var sqlDialect = new SybaseSqlDialect();
+            var sqlDialect = new SybaseSqlAnywhereDialect();
 
             var sqlQuery = sqlDialect.BuildUpdateSqlQuery(ObjectInfo.For(typeof(Customer)), customer);
 

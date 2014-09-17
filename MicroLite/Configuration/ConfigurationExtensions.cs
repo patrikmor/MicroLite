@@ -181,7 +181,7 @@ namespace MicroLite.Configuration
         }
 
         /// <summary>
-        /// Configures a Sybase connection using the connection string with the specified name
+        /// Configures a Sybase SQL Anywhere connection using the connection string with the specified name
         /// in the connection strings section of the app/web config.
         /// </summary>
         /// <param name="configureConnection">The interface to configure a connection.</param>
@@ -189,14 +189,14 @@ namespace MicroLite.Configuration
         /// <returns>The next step in the fluent configuration.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown if configureConnection or connectionName is null.</exception>
         /// <exception cref="ConfigurationException">Thrown if the connection is not found in the app config.</exception>
-        public static ICreateSessionFactory ForSybaseConnection(this IConfigureConnection configureConnection, string connectionName)
+        public static ICreateSessionFactory ForSybaseSqlAnywhereConnection(this IConfigureConnection configureConnection, string connectionName)
         {
             if (configureConnection == null)
             {
                 throw new ArgumentNullException("configureConnection");
             }
 
-            return configureConnection.ForConnection(connectionName, new SybaseSqlDialect(), new SybaseDbDriver());
+            return configureConnection.ForConnection(connectionName, new SybaseSqlAnywhereDialect(), new SybaseDbDriver());
         }
 
         /// <summary>

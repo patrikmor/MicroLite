@@ -76,8 +76,8 @@
     <Compile Include="Dialect\SqlServerCeDialect.cs" />
     <Compile Include="Dialect\SQLiteCharacters.cs" />
     <Compile Include="Dialect\SQLiteDialect.cs" />
-    <Compile Include="Dialect\SybaseSqlCharacters.cs" />
-    <Compile Include="Dialect\SybaseSqlDialect.cs" />
+    <Compile Include="Dialect\SybaseSqlAnywhereCharacters.cs" />
+    <Compile Include="Dialect\SybaseSqlAnywhereDialect.cs" />
     <Compile Include="Driver\FirebirdDbDriver.cs" />
     <Compile Include="Driver\SqlServerCeDbDriver.cs" />
     <Compile Include="Driver\SQLiteDbDriver.cs" />

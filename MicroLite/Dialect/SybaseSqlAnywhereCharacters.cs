@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SybaseSqlCharacters.cs" company="MicroLite">
+// <copyright file="SybaseSqlAnywhereCharacters.cs" company="MicroLite">
 // Copyright 2012 - 2014 Project Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,17 +15,17 @@ namespace MicroLite.Dialect
     /// <summary>
     /// The implementation of <see cref="SqlCharacters"/> for Sybase.
     /// </summary>
-    internal sealed class SybaseSqlCharacters : SqlCharacters
+    internal sealed class SybaseSqlAnywhereCharacters : SqlCharacters
     {
         /// <summary>
         /// The single instance of <see cref="SqlCharacters"/> for Sybase.
         /// </summary>
-        internal static readonly SqlCharacters Instance = new SybaseSqlCharacters();
+        internal static readonly SqlCharacters Instance = new SybaseSqlAnywhereCharacters();
 
         /// <summary>
-        /// Prevents a default instance of the <see cref="SybaseSqlCharacters"/> class from being created.
+        /// Prevents a default instance of the <see cref="SybaseSqlAnywhereCharacters"/> class from being created.
         /// </summary>
-        private SybaseSqlCharacters()
+        private SybaseSqlAnywhereCharacters()
         {
         }
 
