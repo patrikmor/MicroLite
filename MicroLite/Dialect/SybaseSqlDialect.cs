@@ -12,17 +12,34 @@
 // -----------------------------------------------------------------------
 namespace MicroLite.Dialect
 {
+    using MicroLite.Mapping;
+
     /// <summary>
     /// The implementation of <see cref="ISqlDialect"/> for Sybase.
     /// </summary>
     internal sealed class SybaseSqlDialect : SqlDialect
     {
+        private static readonly SqlQuery selectIdentityQuery = new SqlQuery("SELECT @@IDENTITY");
+
         /// <summary>
         /// Initialises a new instance of the <see cref="SybaseSqlDialect"/> class.
         /// </summary>
         internal SybaseSqlDialect()
             : base(SybaseSqlCharacters.Instance)
         {
+        }
+
+        public override bool SupportsSelectInsertedIdentifier
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override SqlQuery BuildSelectInsertIdSqlQuery(IObjectInfo objectInfo)
+        {
+            return selectIdentityQuery;
         }
 
         public override SqlQuery PageQuery(SqlQuery sqlQuery, PagingOptions pagingOptions)
