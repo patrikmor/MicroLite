@@ -12,6 +12,9 @@
 // -----------------------------------------------------------------------
 namespace MicroLite.Dialect
 {
+    using System;
+    using System.Globalization;
+    using System.Text;
     using MicroLite.Mapping;
 
     /// <summary>
@@ -44,7 +47,38 @@ namespace MicroLite.Dialect
 
         public override SqlQuery PageQuery(SqlQuery sqlQuery, PagingOptions pagingOptions)
         {
-            throw new System.NotImplementedException();
+            if (sqlQuery == null)
+            {
+                throw new ArgumentNullException("sqlQuery");
+            }
+
+            var stringBuilder = new StringBuilder()
+                .AppendFormat("SELECT TOP {0} START AT {1} ", pagingOptions.Count.ToString(CultureInfo.InvariantCulture), pagingOptions.Offset.ToString(CultureInfo.InvariantCulture))
+                .Append(sqlQuery.CommandText.Replace(Environment.NewLine, string.Empty).Substring(7));
+
+            return new SqlQuery(stringBuilder.ToString(), sqlQuery.ArgumentsArray);
+        }
+
+        protected override string BuildInsertCommandText(IObjectInfo objectInfo)
+        {
+            var commandText = base.BuildInsertCommandText(objectInfo);
+
+            if (objectInfo.TableInfo.IdentifierStrategy == IdentifierStrategy.Sequence)
+            {
+                var firstParenthesisIndex = commandText.IndexOf('(') + 1;
+
+                commandText = commandText.Insert(
+                    firstParenthesisIndex,
+                    this.SqlCharacters.EscapeSql(objectInfo.TableInfo.IdentifierColumn.ColumnName) + ",");
+
+                var secondParenthesisIndex = commandText.IndexOf('(', firstParenthesisIndex) + 1;
+
+                commandText = commandText.Insert(
+                    secondParenthesisIndex,
+                    objectInfo.TableInfo.IdentifierColumn.SequenceName + ".NEXTVAL,");
+            }
+
+            return commandText;
         }
     }
 }
