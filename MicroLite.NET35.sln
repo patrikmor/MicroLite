@@ -1,4 +1,4 @@
-﻿Microsoft Visual Studio Solution File, Format Version 11.00
+Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLite", "MicroLite\MicroLite.NET35.csproj", "{3DEF63F2-C78B-461C-AC94-410BC45098AA}"
 EndProject

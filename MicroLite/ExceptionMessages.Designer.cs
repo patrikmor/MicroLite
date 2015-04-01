@@ -88,6 +88,33 @@ namespace MicroLite {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The number of values is greater than number of command parameters.
+        /// </summary>
+        internal static string DbDriver_MoreValuesThanParameters {
+            get {
+                return ResourceManager.GetString("DbDriver_MoreValuesThanParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Index of command parameter is out of range.
+        /// </summary>
+        internal static string DbDriver_ParameterIndexOutOfRange {
+            get {
+                return ResourceManager.GetString("DbDriver_ParameterIndexOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type &apos;{0}&apos; cannot be used by MicroLite as is not decorated with a TableAttribute for further information about using the Attribute base Mapping, see the wiki or blog.
+        /// </summary>
+        internal static string DefaultMappingConvention_NoTableAttribute {
+            get {
+                return ResourceManager.GetString("DefaultMappingConvention_NoTableAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &apos;dynamic&apos; type can only be used for queries where an SqlQuery is supplied, it cannot be used for select by identifier, insert, update or delete..
         /// </summary>
         internal static string ExpandoObjectInfo_NotSupportedReason {
@@ -255,6 +282,15 @@ namespace MicroLite {
         internal static string Session_IdentifierNotSetForUpdate {
             get {
                 return ResourceManager.GetString("Session_IdentifierNotSetForUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple inserts are supported only on DbDriver which supports batched queries.
+        /// </summary>
+        internal static string Session_MultipleInsertsNotSupported {
+            get {
+                return ResourceManager.GetString("Session_MultipleInsertsNotSupported", resourceCulture);
             }
         }
         

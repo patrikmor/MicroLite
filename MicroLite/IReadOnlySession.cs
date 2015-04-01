@@ -22,14 +22,6 @@ namespace MicroLite
     public interface IReadOnlySession : IHideObjectMethods, IDisposable
     {
         /// <summary>
-        /// Gets the advanced session operations.
-        /// </summary>
-        IAdvancedReadOnlySession Advanced
-        {
-            get;
-        }
-
-        /// <summary>
         /// Gets the current transaction or null if one has not been started.
         /// </summary>
         ITransaction CurrentTransaction
@@ -203,5 +195,32 @@ namespace MicroLite
         /// </example>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Single", Justification = "It's used in loads of places by the linq extension methods as a method name.")]
         T Single<T>(SqlQuery sqlQuery);
+
+        /// <summary>
+        /// Executes the specified SQL query and returns instance of DataSet object.
+        /// </summary>
+        /// <param name="sqlQuery">The SQL query to execute.</param>
+        /// <param name="withKey">Indicates whether the returned DataSet will contain primary key information.</param>
+        /// <returns>System.Data.DataSet</returns>
+        /// <exception cref="ObjectDisposedException">Thrown if the session has been disposed.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the specified instance is null.</exception>
+        /// <exception cref="MicroLiteException">Thrown if there is an error executing the query.</exception>
+        DataSet DataSet(SqlQuery sqlQuery, bool withKey);
+
+        /// <summary>
+        /// Executes the specified SQL query and returns instance of DataTable object.
+        /// </summary>
+        /// <param name="sqlQuery">The SQL query to execute.</param>
+        /// <param name="withKey">Indicates whether the returned DataTable will contain primary key information.</param>
+        /// <returns>System.Data.DataTable</returns>
+        /// <exception cref="ObjectDisposedException">Thrown if the session has been disposed.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the specified instance is null.</exception>
+        /// <exception cref="MicroLiteException">Thrown if there is an error executing the query.</exception>
+        DataTable DataTable(SqlQuery sqlQuery, bool withKey);
+
+        /// <summary>
+        /// Executes any pending queries which have been queued using the Include API.
+        /// </summary>
+        void ExecutePendingQueries();
     }
 }

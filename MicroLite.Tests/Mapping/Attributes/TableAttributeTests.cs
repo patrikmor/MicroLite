@@ -1,6 +1,6 @@
-﻿namespace MicroLite.Tests.Mapping.Attributes
+﻿namespace MicroLite.Tests.Mapping
 {
-    using MicroLite.Mapping.Attributes;
+    using MicroLite.Mapping;
     using Xunit;
 
     /// <summary>

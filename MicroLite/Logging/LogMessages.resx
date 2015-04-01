@@ -204,4 +204,7 @@
   <data name="Session_Disposed" xml:space="preserve">
     <value>The Session has been disposed</value>
   </data>
+  <data name="DefaultMappingConvention_IgnoringProperty" xml:space="preserve">
+    <value>The property '{0}.{1}' will not be mapped by MicroLite as it has IgnoreColumnAttribute specified</value>
+  </data>
 </root>

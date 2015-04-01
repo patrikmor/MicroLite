@@ -13,6 +13,7 @@
 namespace MicroLite.Core
 {
     using System;
+    using System.Data;
     using System.Collections.Generic;
     using System.Globalization;
     using MicroLite.Builder;
@@ -25,7 +26,7 @@ namespace MicroLite.Core
     /// The default implementation of <see cref="IReadOnlySession" />.
     /// </summary>
     [System.Diagnostics.DebuggerDisplay("ConnectionScope: {ConnectionScope}")]
-    internal class ReadOnlySession : SessionBase, IReadOnlySession, IIncludeSession, IAdvancedReadOnlySession
+    internal class ReadOnlySession : SessionBase, IReadOnlySession, IIncludeSession
     {
         private readonly Queue<Include> includes = new Queue<Include>();
         private readonly Queue<SqlQuery> queries = new Queue<SqlQuery>();
@@ -38,14 +39,6 @@ namespace MicroLite.Core
             : base(connectionScope, sqlDriver)
         {
             this.sqlDialect = sqlDialect;
-        }
-
-        public IAdvancedReadOnlySession Advanced
-        {
-            get
-            {
-                return this;
-            }
         }
 
         public IIncludeSession Include
@@ -308,6 +301,88 @@ namespace MicroLite.Core
                 }
             }
             while (this.queries.Count > 0);
+        }
+      
+        public DataSet DataSet(SqlQuery sqlQuery, bool withKey)
+        {
+            this.ThrowIfDisposed();
+
+            if(sqlQuery == null)
+            {
+                throw new ArgumentNullException("sqlQuery");
+            }
+
+            try
+            {
+                using(var command = this.CreateCommand(sqlQuery))
+                {
+                    var adapter = this.DbDriver.CreateDataAdapter();
+                    adapter.SelectCommand = command as System.Data.Common.DbCommand;
+
+                    if (withKey)
+                    {
+                        adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                    }
+
+                    DataSet dataSet = new DataSet();
+                    dataSet.Locale = CultureInfo.CurrentCulture;
+                    adapter.Fill(dataSet);
+
+                    this.CommandCompleted();
+
+                    return dataSet;
+                }
+            }
+            catch(MicroLiteException)
+            {
+                // Don't re-wrap MicroLite exceptions
+                throw;
+            }
+            catch(Exception e)
+            {
+                throw new MicroLiteException(e.Message, e);
+            }
+        }
+
+        public DataTable DataTable(SqlQuery sqlQuery, bool withKey)
+        {
+            this.ThrowIfDisposed();
+
+            if(sqlQuery == null)
+            {
+                throw new ArgumentNullException("sqlQuery");
+            }
+
+            try
+            {
+                using(var command = this.CreateCommand(sqlQuery))
+                {
+                    var adapter = this.DbDriver.CreateDataAdapter();
+                    adapter.SelectCommand = command as System.Data.Common.DbCommand;
+
+                    if (withKey)
+                    {
+                        adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                    }
+
+                    DataTable dataTable = new DataTable();
+                    dataTable.Locale = CultureInfo.CurrentCulture;
+                    adapter.Fill(dataTable);
+
+                    this.CommandCompleted();
+
+                    return dataTable;
+                }
+            }
+            catch(MicroLiteException)
+            {
+                // Don't re-wrap MicroLite exceptions
+                throw;
+            }
+            catch(Exception e)
+            {
+                throw new MicroLiteException(e.Message, e);
+            }
         }
     }
 }

@@ -19,22 +19,6 @@
     public class AsyncSessionTests : UnitTest
     {
         [Fact]
-        public void AdvancedReturnsSameSessionByDifferentInterface()
-        {
-            var session = new AsyncSession(
-                ConnectionScope.PerTransaction,
-                new Mock<ISqlDialect>().Object,
-                new Mock<IDbDriver>().Object,
-                new IDeleteListener[0],
-                new IInsertListener[0],
-                new IUpdateListener[0]);
-
-            var advancedSession = session.Advanced;
-
-            Assert.Same(session, advancedSession);
-        }
-
-        [Fact]
         public void DeleteInstanceInvokesListeners()
         {
             var customer = new Customer

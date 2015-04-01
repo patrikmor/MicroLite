@@ -24,12 +24,13 @@ namespace MicroLite.Core
     using MicroLite.Listeners;
     using MicroLite.Mapping;
     using MicroLite.TypeConverters;
+    using System.Data;
 
     /// <summary>
     /// The default implementation of <see cref="IAsyncSession"/>.
     /// </summary>
     [System.Diagnostics.DebuggerDisplay("ConnectionScope: {ConnectionScope}")]
-    internal sealed class AsyncSession : AsyncReadOnlySession, IAsyncSession, IAdvancedAsyncSession
+    internal sealed class AsyncSession : AsyncReadOnlySession, IAsyncSession
     {
         private readonly IList<IDeleteListener> deleteListeners;
         private readonly IList<IInsertListener> insertListeners;
@@ -47,14 +48,6 @@ namespace MicroLite.Core
             this.deleteListeners = deleteListeners;
             this.insertListeners = insertListeners;
             this.updateListeners = updateListeners;
-        }
-
-        public new IAdvancedAsyncSession Advanced
-        {
-            get
-            {
-                return this;
-            }
         }
 
         public Task<bool> DeleteAsync(object instance)
@@ -95,6 +88,82 @@ namespace MicroLite.Core
             }
 
             return rowsAffected == 1;
+        }
+
+        public Task<int> DeleteAsync<T>(IList<T> instances)
+        {
+            return this.DeleteAsync<T>(instances, CancellationToken.None);
+        }
+
+        public async Task<int> DeleteAsync<T>(IList<T> instances, CancellationToken cancellationToken)
+        {
+            this.ThrowIfDisposed();
+
+            if (instances == null)
+            {
+                throw new ArgumentNullException("instances");
+            }
+
+            if (instances.Count == 0)
+            {
+                return 0;
+            }
+
+            var objectInfo = ObjectInfo.For(typeof(T));
+
+            int allRowsAffected = 0;
+            DbCommand command = null;
+
+            try
+            {
+                foreach (var instance in instances)
+                {
+                    for (int i = 0; i < this.deleteListeners.Count; i++)
+                    {
+                        this.deleteListeners[i].BeforeDelete(instance);
+                    }
+
+                    var identifier = objectInfo.GetIdentifierValue(instance);
+
+                    if (objectInfo.IsDefaultIdentifier(identifier))
+                    {
+                        throw new MicroLiteException(ExceptionMessages.Session_IdentifierNotSetForDelete);
+                    }
+
+                    if (command == null)
+                    {
+                        //initialize IDbCommand in the first iteration
+                        var sqlQuery = this.SqlDialect.BuildDeleteSqlQuery(objectInfo, identifier);
+                        command = (DbCommand)this.CreateCommand(sqlQuery);
+                    }
+                    else
+                    {
+                        //set command parameter value
+                        this.DbDriver.SetCommandParameterValue(command, 0, identifier);
+                    }
+
+                    int rowsAffected = await this.ExecuteQueryAsync(command, cancellationToken).ConfigureAwait(false);
+
+                    for (int i = this.deleteListeners.Count - 1; i >= 0; i--)
+                    {
+                        this.deleteListeners[i].AfterDelete(instance, rowsAffected);
+                    }
+
+                    allRowsAffected += rowsAffected;
+                }
+            }
+            finally
+            {
+                this.CommandCompleted();
+
+                if (command != null)
+                {
+                    command.Dispose();
+                    command = null;
+                }
+            }
+
+            return allRowsAffected;
         }
 
         public Task<bool> DeleteAsync(Type type, object identifier)
@@ -189,6 +258,97 @@ namespace MicroLite.Core
             }
         }
 
+        public Task InsertAsync<T>(IList<T> instances)
+        {
+            return this.InsertAsync<T>(instances, CancellationToken.None);
+        }
+
+        public async Task InsertAsync<T>(IList<T> instances, CancellationToken cancellationToken)
+        {
+            this.ThrowIfDisposed();
+
+            if (instances == null)
+            {
+                throw new ArgumentNullException("instances");
+            }
+
+            if (instances.Count == 0)
+            {
+                return;
+            }
+
+            var objectInfo = ObjectInfo.For(typeof(T));
+
+            if (this.SqlDialect.SupportsSelectInsertedIdentifier
+                && objectInfo.TableInfo.IdentifierStrategy != IdentifierStrategy.Assigned
+                && !this.DbDriver.SupportsBatchedQueries)
+            {
+                throw new NotSupportedException(ExceptionMessages.Session_MultipleInsertsNotSupported);
+            }
+
+            DbCommand command = null;
+
+            try
+            {
+                foreach (var instance in instances)
+                {
+                    for (int i = 0; i < this.insertListeners.Count; i++)
+                    {
+                        this.insertListeners[i].BeforeInsert(instance);
+                    }
+
+                    objectInfo.VerifyInstanceForInsert(instance);
+
+                    if (command == null)
+                    {
+                        //initialize IDbCommand in the first iteration
+                        var insertSqlQuery = this.SqlDialect.BuildInsertSqlQuery(objectInfo, instance);
+
+                        if (this.SqlDialect.SupportsSelectInsertedIdentifier
+                            && objectInfo.TableInfo.IdentifierStrategy != IdentifierStrategy.Assigned)
+                        {
+                            var selectInsertIdSqlQuery = this.SqlDialect.BuildSelectInsertIdSqlQuery(objectInfo);
+                            insertSqlQuery = this.DbDriver.Combine(insertSqlQuery, selectInsertIdSqlQuery);
+                        }
+
+                        command = (DbCommand)this.CreateCommand(insertSqlQuery);
+                    }
+                    else
+                    {
+                        //set command parameters values
+                        var values = objectInfo.GetInsertValues(instance);
+                        this.DbDriver.SetCommandParametersValues(command, values);
+                    }
+
+                    object identifier = null;
+
+                    if (objectInfo.TableInfo.IdentifierStrategy != IdentifierStrategy.Assigned)
+                    {
+                        identifier = await this.ExecuteScalarQueryAsync<object>(command, cancellationToken).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await this.ExecuteQueryAsync(command, cancellationToken).ConfigureAwait(false);
+                    }
+
+                    for (int i = this.insertListeners.Count - 1; i >= 0; i--)
+                    {
+                        this.insertListeners[i].AfterInsert(instance, identifier);
+                    }
+                }
+            }
+            finally
+            {
+                this.CommandCompleted();
+
+                if (command != null)
+                {
+                    command.Dispose();
+                    command = null;
+                }
+            }
+        }
+
         public Task<bool> UpdateAsync(object instance)
         {
             return this.UpdateAsync(instance, CancellationToken.None);
@@ -225,6 +385,81 @@ namespace MicroLite.Core
             }
 
             return rowsAffected == 1;
+        }
+
+        public Task<int> UpdateAsync<T>(IList<T> instances)
+        {
+            return this.UpdateAsync<T>(instances, CancellationToken.None);
+        }
+
+        public async Task<int> UpdateAsync<T>(IList<T> instances, CancellationToken cancellationToken)
+        {
+            this.ThrowIfDisposed();
+
+            if (instances == null)
+            {
+                throw new ArgumentNullException("instances");
+            }
+
+            if (instances.Count == 0)
+            {
+                return 0;
+            }
+
+            var objectInfo = ObjectInfo.For(typeof(T));
+
+            int allRowsAffected = 0;
+            DbCommand command = null;
+
+            try
+            {
+                foreach (var instance in instances)
+                {
+                    for (int i = 0; i < this.updateListeners.Count; i++)
+                    {
+                        this.updateListeners[i].BeforeUpdate(instance);
+                    }
+
+                    if (objectInfo.HasDefaultIdentifierValue(instance))
+                    {
+                        throw new MicroLiteException(ExceptionMessages.Session_IdentifierNotSetForUpdate);
+                    }
+
+                    if (command == null)
+                    {
+                        //initialize IDbCommand in the first iteration
+                        var sqlQuery = this.SqlDialect.BuildUpdateSqlQuery(objectInfo, instance);
+                        command = (DbCommand)this.CreateCommand(sqlQuery);
+                    }
+                    else
+                    {
+                        //set command parameters values
+                        var values = objectInfo.GetUpdateValues(instance);
+                        this.DbDriver.SetCommandParametersValues(command, values);
+                    }
+
+                    int rowsAffected = await this.ExecuteQueryAsync(command, cancellationToken).ConfigureAwait(false);
+
+                    for (int i = this.updateListeners.Count - 1; i >= 0; i--)
+                    {
+                        this.updateListeners[i].AfterUpdate(instance, rowsAffected);
+                    }
+
+                    allRowsAffected += rowsAffected;
+                }
+            }
+            finally
+            {
+                this.CommandCompleted();
+
+                if (command != null)
+                {
+                    command.Dispose();
+                    command = null;
+                }
+            }
+
+            return allRowsAffected;
         }
 
         public Task<bool> UpdateAsync(ObjectDelta objectDelta)
@@ -282,6 +517,28 @@ namespace MicroLite.Core
             }
         }
 
+        private async Task<int> ExecuteQueryAsync(DbCommand command, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // Don't re-wrap Operation Canceled exceptions
+                throw;
+            }
+            catch (MicroLiteException)
+            {
+                // Don't re-wrap MicroLite exceptions
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new MicroLiteException(e.Message, e);
+            }
+        }
+
         private async Task<T> ExecuteScalarQueryAsync<T>(SqlQuery sqlQuery, CancellationToken cancellationToken)
         {
             try
@@ -298,6 +555,34 @@ namespace MicroLite.Core
 
                     return converted;
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                // Don't re-wrap Operation Canceled exceptions
+                throw;
+            }
+            catch (MicroLiteException)
+            {
+                // Don't re-wrap MicroLite exceptions
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new MicroLiteException(e.Message, e);
+            }
+        }
+
+        private async Task<T> ExecuteScalarQueryAsync<T>(DbCommand command, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+
+                var resultType = typeof(T);
+                var typeConverter = TypeConverter.For(resultType) ?? TypeConverter.Default;
+                var converted = (T)typeConverter.ConvertFromDbValue(result, resultType);
+
+                return converted;
             }
             catch (OperationCanceledException)
             {

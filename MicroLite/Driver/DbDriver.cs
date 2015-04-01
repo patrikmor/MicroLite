@@ -259,6 +259,74 @@ namespace MicroLite.Driver
         }
 
         /// <summary>
+        /// Creates an DbDataAdapter.
+        /// </summary>
+        /// <returns>System.Data.Common.DbDataAdapter</returns>
+        public DbDataAdapter CreateDataAdapter()
+        {
+            return this.DbProviderFactory.CreateDataAdapter();
+        }
+
+        /// <summary>
+        /// Sets IDbCommand parameters values to specified SqlArgument array.
+        /// </summary>
+        /// <param name="command">An IDbCommand with the CommandText, CommandType, Timeout and Parameters set.</param>
+        /// <param name="values">Array of SqlArgument with values.</param>
+        /// <exception cref="MicroLiteException">Thrown if the number of values is greater than number of command parameters.</exception>
+        public void SetCommandParametersValues(IDbCommand command, SqlArgument[] values)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException("command");
+            }
+
+            if (values == null)
+            {
+                throw new ArgumentNullException("values");
+            }
+
+            if (values.Length == 0)
+            {
+                return;
+            }
+
+            if (values.Length > command.Parameters.Count)
+            {
+                throw new MicroLiteException(ExceptionMessages.DbDriver_MoreValuesThanParameters);
+            }
+
+            IDbDataParameter parameter;
+            for (int i = 0; i < values.Length; i++)
+            {
+                parameter = command.Parameters[i] as IDbDataParameter;
+                parameter.Value = values[i].Value ?? DBNull.Value;
+            }
+        }
+
+        /// <summary>
+        /// Sets IDbCommand parameter value to specified value.
+        /// </summary>
+        /// <param name="command">An IDbCommand with the CommandText, CommandType, Timeout and Parameters set.</param>
+        /// <param name="index">Index of parameter in IDbCommand Parameters collection.</param>
+        /// <param name="value">Value to set.</param>
+        /// <exception cref="MicroLiteException">Thrown if the parameter index is out of range.</exception>
+        public void SetCommandParameterValue(IDbCommand command, int index, object value)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException("command");
+            }
+
+            if (index < 0 || index > command.Parameters.Count - 1)
+            {
+                throw new MicroLiteException(ExceptionMessages.DbDriver_ParameterIndexOutOfRange);
+            }
+
+            var parameter = command.Parameters[index] as IDbDataParameter;
+            parameter.Value = value ?? DBNull.Value;
+        }
+
+        /// <summary>
         /// Builds the the IDbDataParameter using the specified name and value.
         /// </summary>
         /// <param name="parameter">The parameter to build.</param>

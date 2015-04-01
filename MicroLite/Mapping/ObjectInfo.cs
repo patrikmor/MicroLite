@@ -34,7 +34,7 @@ namespace MicroLite.Mapping
             {
                 if (mappingConvention == null)
                 {
-                    mappingConvention = mappingConvention = new ConventionMappingConvention(ConventionMappingSettings.Default);
+                    mappingConvention = mappingConvention = new DefaultMappingConvention();
                 }
 
                 return mappingConvention;

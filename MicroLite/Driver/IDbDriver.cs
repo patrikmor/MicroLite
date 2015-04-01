@@ -75,5 +75,26 @@ namespace MicroLite.Driver
         /// </summary>
         /// <returns>The IDbConnection to the database.</returns>
         IDbConnection CreateConnection();
+
+        /// <summary>
+        /// Creates an DbDataAdapter.
+        /// </summary>
+        /// <returns>System.Data.Common.DbDataAdapter</returns>
+        DbDataAdapter CreateDataAdapter();
+
+        /// <summary>
+        /// Sets IDBCommand parameters values to specified SqlArgument array.
+        /// </summary>
+        /// <param name="command">An IDbCommand with the CommandText, CommandType, Timeout and Parameters set.</param>
+        /// <param name="values">Array of SqlArgument with values.</param>
+        void SetCommandParametersValues(IDbCommand command, SqlArgument[] values);
+
+        /// <summary>
+        /// Sets IDBCommand parameter value to specified value.
+        /// </summary>
+        /// <param name="command">An IDbCommand with the CommandText, CommandType, Timeout and Parameters set.</param>
+        /// <param name="index">Index of parameter in IDbCommand Parameters array.</param>
+        /// <param name="value">Value to set.</param>
+        void SetCommandParameterValue(IDbCommand command, int index, object value);
     }
 }

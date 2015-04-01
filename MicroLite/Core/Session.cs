@@ -13,6 +13,7 @@
 namespace MicroLite.Core
 {
     using System;
+    using System.Data;
     using System.Collections.Generic;
     using MicroLite.Dialect;
     using MicroLite.Driver;
@@ -24,7 +25,7 @@ namespace MicroLite.Core
     /// The default implementation of <see cref="ISession"/>.
     /// </summary>
     [System.Diagnostics.DebuggerDisplay("ConnectionScope: {ConnectionScope}")]
-    internal sealed class Session : ReadOnlySession, ISession, IAdvancedSession
+    internal sealed class Session : ReadOnlySession, ISession
     {
         private readonly IList<IDeleteListener> deleteListeners;
         private readonly IList<IInsertListener> insertListeners;
@@ -42,14 +43,6 @@ namespace MicroLite.Core
             this.deleteListeners = deleteListeners;
             this.insertListeners = insertListeners;
             this.updateListeners = updateListeners;
-        }
-
-        public new IAdvancedSession Advanced
-        {
-            get
-            {
-                return this;
-            }
         }
 
         public bool Delete(object instance)
@@ -85,6 +78,77 @@ namespace MicroLite.Core
             }
 
             return rowsAffected == 1;
+        }
+
+        public int Delete<T>(IList<T> instances)
+        {
+            this.ThrowIfDisposed();
+
+            if (instances == null)
+            {
+                throw new ArgumentNullException("instances");
+            }
+
+            if (instances.Count == 0)
+            {
+                return 0;
+            }
+
+            var objectInfo = ObjectInfo.For(typeof(T));
+
+            int allRowsAffected = 0;
+            IDbCommand command = null;
+
+            try
+            {
+                foreach(var instance in instances)
+                {
+                    for (int i = 0; i < this.deleteListeners.Count; i++)
+                    {
+                        this.deleteListeners[i].BeforeDelete(instance);
+                    }
+
+                    var identifier = objectInfo.GetIdentifierValue(instance);
+
+                    if (objectInfo.IsDefaultIdentifier(identifier))
+                    {
+                        throw new MicroLiteException(ExceptionMessages.Session_IdentifierNotSetForDelete);
+                    }
+
+                    if (command == null)
+                    {
+                        //initialize IDbCommand in the first iteration
+                        var sqlQuery = this.SqlDialect.BuildDeleteSqlQuery(objectInfo, identifier);
+                        command = this.CreateCommand(sqlQuery);
+                    }
+                    else
+                    {
+                        //set command parameter value
+                        this.DbDriver.SetCommandParameterValue(command, 0, identifier);
+                    }
+
+                    int rowsAffected = this.ExecuteQuery(command);
+
+                    for (int i = this.deleteListeners.Count - 1; i >= 0; i--)
+                    {
+                        this.deleteListeners[i].AfterDelete(instance, rowsAffected);
+                    }
+
+                    allRowsAffected += rowsAffected;
+                }
+            }
+            finally
+            {
+                this.CommandCompleted();
+
+                if (command != null)
+                {
+                    command.Dispose();
+                    command = null;
+                }
+            }
+
+            return allRowsAffected;
         }
 
         public bool Delete(Type type, object identifier)
@@ -159,6 +223,92 @@ namespace MicroLite.Core
             }
         }
 
+        public void Insert<T>(IList<T> instances)
+        {
+            this.ThrowIfDisposed();
+
+            if (instances == null)
+            {
+                throw new ArgumentNullException("instances");
+            }
+
+            if (instances.Count == 0)
+            {
+                return;
+            }
+
+            var objectInfo = ObjectInfo.For(typeof(T));
+
+            if (this.SqlDialect.SupportsSelectInsertedIdentifier
+                && objectInfo.TableInfo.IdentifierStrategy != IdentifierStrategy.Assigned
+                && !this.DbDriver.SupportsBatchedQueries)
+            {
+                throw new NotSupportedException(ExceptionMessages.Session_MultipleInsertsNotSupported);
+            }
+
+            IDbCommand command = null;
+
+            try
+            {
+                foreach(var instance in instances)
+                {
+                    for(int i = 0; i < this.insertListeners.Count; i++)
+                    {
+                        this.insertListeners[i].BeforeInsert(instance);
+                    }
+
+                    objectInfo.VerifyInstanceForInsert(instance);
+
+                    if(command == null)
+                    {
+                        //initialize IDbCommand in the first iteration
+                        var insertSqlQuery = this.SqlDialect.BuildInsertSqlQuery(objectInfo, instance);
+
+                        if (this.SqlDialect.SupportsSelectInsertedIdentifier
+                            && objectInfo.TableInfo.IdentifierStrategy != IdentifierStrategy.Assigned)
+                        {
+                            var selectInsertIdSqlQuery = this.SqlDialect.BuildSelectInsertIdSqlQuery(objectInfo);
+                            insertSqlQuery = this.DbDriver.Combine(insertSqlQuery, selectInsertIdSqlQuery);
+                        }
+
+                        command = this.CreateCommand(insertSqlQuery);
+                    }
+                    else
+                    {
+                        //set command parameters values
+                        var values = objectInfo.GetInsertValues(instance);
+                        this.DbDriver.SetCommandParametersValues(command, values);
+                    }
+
+                    object identifier = null;
+
+                    if (objectInfo.TableInfo.IdentifierStrategy != IdentifierStrategy.Assigned)
+                    {
+                        identifier = this.ExecuteScalarQuery<object>(command);
+                    }
+                    else
+                    {
+                        this.ExecuteQuery(command);
+                    }
+
+                    for (int i = this.insertListeners.Count - 1; i >= 0; i--)
+                    {
+                        this.insertListeners[i].AfterInsert(instance, identifier);
+                    }
+                }
+            }
+            finally
+            {
+                this.CommandCompleted();
+
+                if (command != null)
+                {
+                    command.Dispose();
+                    command = null;
+                }
+            }
+        }
+
         public bool Update(object instance)
         {
             this.ThrowIfDisposed();
@@ -190,6 +340,76 @@ namespace MicroLite.Core
             }
 
             return rowsAffected == 1;
+        }
+
+        public int Update<T>(IList<T> instances)
+        {
+            this.ThrowIfDisposed();
+
+            if (instances == null)
+            {
+                throw new ArgumentNullException("instances");
+            }
+
+            if (instances.Count == 0)
+            {
+                return 0;
+            }
+
+            var objectInfo = ObjectInfo.For(typeof(T));
+
+            int allRowsAffected = 0;
+            IDbCommand command = null;
+
+            try
+            {
+                foreach(var instance in instances)
+                {
+                    for (int i = 0; i < this.updateListeners.Count; i++)
+                    {
+                        this.updateListeners[i].BeforeUpdate(instance);
+                    }
+
+                    if (objectInfo.HasDefaultIdentifierValue(instance))
+                    {
+                        throw new MicroLiteException(ExceptionMessages.Session_IdentifierNotSetForUpdate);
+                    }
+
+                    if (command == null)
+                    {
+                        //initialize IDbCommand in the first iteration
+                        var sqlQuery = this.SqlDialect.BuildUpdateSqlQuery(objectInfo, instance);
+                        command = this.CreateCommand(sqlQuery);
+                    }
+                    else
+                    {
+                        //set command parameters values
+                        var values = objectInfo.GetUpdateValues(instance);
+                        this.DbDriver.SetCommandParametersValues(command, values);
+                    }
+
+                    int rowsAffected = this.ExecuteQuery(command);
+
+                    for (int i = this.updateListeners.Count - 1; i >= 0; i--)
+                    {
+                        this.updateListeners[i].AfterUpdate(instance, rowsAffected);
+                    }
+
+                    allRowsAffected += rowsAffected;
+                }
+            }
+            finally
+            {
+                this.CommandCompleted();
+
+                if (command != null)
+                {
+                    command.Dispose();
+                    command = null;
+                }
+            }
+
+            return allRowsAffected;
         }
 
         public bool Update(ObjectDelta objectDelta)
@@ -237,6 +457,23 @@ namespace MicroLite.Core
             }
         }
 
+        private int ExecuteQuery(IDbCommand command)
+        {
+            try
+            {
+                return command.ExecuteNonQuery();
+            }
+            catch(MicroLiteException)
+            {
+                // Don't re-wrap MicroLite exceptions
+                throw;
+            }
+            catch(Exception e)
+            {
+                throw new MicroLiteException(e.Message, e);
+            }
+        }
+
         private T ExecuteScalarQuery<T>(SqlQuery sqlQuery)
         {
             try
@@ -253,6 +490,29 @@ namespace MicroLite.Core
 
                     return converted;
                 }
+            }
+            catch (MicroLiteException)
+            {
+                // Don't re-wrap MicroLite exceptions
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new MicroLiteException(e.Message, e);
+            }
+        }
+
+        private T ExecuteScalarQuery<T>(IDbCommand command)
+        {
+            try
+            {
+                var result = command.ExecuteScalar();
+
+                var resultType = typeof(T);
+                var typeConverter = TypeConverter.For(resultType) ?? TypeConverter.Default;
+                var converted = (T)typeConverter.ConvertFromDbValue(result, resultType);
+
+                return converted;
             }
             catch (MicroLiteException)
             {

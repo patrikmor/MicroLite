@@ -26,14 +26,6 @@ namespace MicroLite
     public interface IAsyncReadOnlySession : IHideObjectMethods, IDisposable
     {
         /// <summary>
-        /// Gets the advanced async session operations.
-        /// </summary>
-        IAdvancedAsyncReadOnlySession Advanced
-        {
-            get;
-        }
-
-        /// <summary>
         /// Gets the current transaction or null if one has not been started.
         /// </summary>
         ITransaction CurrentTransaction
@@ -326,6 +318,69 @@ namespace MicroLite
         /// </code>
         /// </example>
         Task<T> SingleAsync<T>(SqlQuery sqlQuery, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Executes the specified SQL query and returns instance of DataSet object.
+        /// </summary>
+        /// <param name="sqlQuery">The SQL query to execute.</param>
+        /// <param name="withKey">Indicates whether the returned DataSet will contain primary key information.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="ObjectDisposedException">Thrown if the session has been disposed.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the specified instance is null.</exception>
+        /// <exception cref="MicroLiteException">Thrown if there is an error executing the query.</exception>
+        Task<DataSet> DataSetAsync(SqlQuery sqlQuery, bool withKey);
+
+        /// <summary>
+        /// Executes the specified SQL query and returns instance of DataSet object.
+        /// This method propagates a notification that operations should be cancelled.
+        /// </summary>
+        /// <param name="sqlQuery">The SQL query to execute.</param>
+        /// <param name="withKey">Indicates whether the returned DataSet will contain primary key information.</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="ObjectDisposedException">Thrown if the session has been disposed.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the specified instance is null.</exception>
+        /// <exception cref="MicroLiteException">Thrown if there is an error executing the query.</exception>
+        Task<DataSet> DataSetAsync(SqlQuery sqlQuery, bool withKey, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Executes the specified SQL query and returns instance of DataTable object.
+        /// </summary>
+        /// <param name="sqlQuery">The SQL query to execute.</param>
+        /// <param name="withKey">Indicates whether the returned DataSet will contain primary key information.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="ObjectDisposedException">Thrown if the session has been disposed.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the specified instance is null.</exception>
+        /// <exception cref="MicroLiteException">Thrown if there is an error executing the query.</exception>
+        Task<DataTable> DataTableAsync(SqlQuery sqlQuery, bool withKey);
+
+        /// <summary>
+        /// Executes the specified SQL query and returns instance of DataTable object.
+        /// This method propagates a notification that operations should be cancelled.
+        /// </summary>
+        /// <param name="sqlQuery">The SQL query to execute.</param>
+        /// <param name="withKey">Indicates whether the returned DataSet will contain primary key information.</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="ObjectDisposedException">Thrown if the session has been disposed.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the specified instance is null.</exception>
+        /// <exception cref="MicroLiteException">Thrown if there is an error executing the query.</exception>
+        Task<DataTable> DataTableAsync(SqlQuery sqlQuery, bool withKey, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Asynchronously executes any pending queries which have been queued using the Include API.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <remarks>Invokes ExecutePendingQueriesAsync(CancellationToken) with CancellationToken.None.</remarks>
+        Task ExecutePendingQueriesAsync();
+
+        /// <summary>
+        /// Asynchronously executes any pending queries which have been queued using the Include API.
+        /// This method propagates a notification that operations should be cancelled.
+        /// </summary>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task ExecutePendingQueriesAsync(CancellationToken cancellationToken);
     }
 
 #endif

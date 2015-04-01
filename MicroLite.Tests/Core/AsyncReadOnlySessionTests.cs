@@ -27,19 +27,6 @@
         }
 
         [Fact]
-        public void AdvancedReturnsSameSessionByDifferentInterface()
-        {
-            var session = new AsyncReadOnlySession(
-                ConnectionScope.PerTransaction,
-                new Mock<ISqlDialect>().Object,
-                new Mock<IDbDriver>().Object);
-
-            var advancedSession = session.Advanced;
-
-            Assert.Same(session, advancedSession);
-        }
-
-        [Fact]
         public void AllCreatesASelectAllQueryExecutesAndReturnsResults()
         {
             var mockReader = new Mock<IDataReader>();

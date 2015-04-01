@@ -16,7 +16,6 @@ namespace MicroLite.Configuration
     using MicroLite.Dialect;
     using MicroLite.Driver;
     using MicroLite.Mapping;
-    using MicroLite.Mapping.Attributes;
 
     /// <summary>
     /// Extension methods for IConfigureExtensions.
@@ -345,6 +344,25 @@ namespace MicroLite.Configuration
             }
 
             configureExtensions.SetMappingConvention(new ConventionMappingConvention(settings));
+
+            return configureExtensions;
+        }
+
+        /// <summary>
+        /// Configures the MicroLite ORM Framework to use default attribute based mapping instead of the convention based mapping.
+        /// </summary>
+        /// <param name="configureExtensions">The interface to configure extensions.</param>
+        /// <returns>The interface which provides the extension points.</returns>
+        /// <exception cref="System.ArgumentNullException">Thrown if any argument is null.</exception>
+        public static IConfigureExtensions WithDefaultBasedMapping(
+            this IConfigureExtensions configureExtensions)
+        {
+            if(configureExtensions == null)
+            {
+                throw new ArgumentNullException("configureExtensions");
+            }
+
+            configureExtensions.SetMappingConvention(new DefaultMappingConvention());
 
             return configureExtensions;
         }

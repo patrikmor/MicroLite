@@ -15,6 +15,7 @@ namespace MicroLite.Core
 #if NET_4_5
 
     using System;
+    using System.Data;
     using System.Collections.Generic;
     using System.Data.Common;
     using System.Globalization;
@@ -30,7 +31,7 @@ namespace MicroLite.Core
     /// The default implementation of <see cref="IAsyncReadOnlySession" />.
     /// </summary>
     [System.Diagnostics.DebuggerDisplay("ConnectionScope: {ConnectionScope}")]
-    internal class AsyncReadOnlySession : SessionBase, IAsyncReadOnlySession, IIncludeSession, IAdvancedAsyncReadOnlySession
+    internal class AsyncReadOnlySession : SessionBase, IAsyncReadOnlySession, IIncludeSession
     {
         private readonly Queue<Include> includes = new Queue<Include>();
         private readonly Queue<SqlQuery> queries = new Queue<SqlQuery>();
@@ -43,14 +44,6 @@ namespace MicroLite.Core
             : base(connectionScope, sqlDriver)
         {
             this.sqlDialect = sqlDialect;
-        }
-
-        public IAdvancedAsyncReadOnlySession Advanced
-        {
-            get
-            {
-                return this;
-            }
         }
 
         public IIncludeSession Include
@@ -344,6 +337,118 @@ namespace MicroLite.Core
                 }
             }
             while (this.queries.Count > 0);
+        }
+
+        public Task<DataSet> DataSetAsync(SqlQuery sqlQuery, bool withKey)
+        {
+            return this.DataSetAsync(sqlQuery, withKey, CancellationToken.None);
+        }
+
+        public async Task<DataSet> DataSetAsync(SqlQuery sqlQuery, bool withKey, CancellationToken cancellationToken)
+        {
+            this.ThrowIfDisposed();
+
+            if (sqlQuery == null)
+            {
+                throw new ArgumentNullException("sqlQuery");
+            }
+
+            try
+            {
+                using (var command = (DbCommand)this.CreateCommand(sqlQuery))
+                {
+                    var result = await Task.Run<DataSet>(() =>
+                    {
+                        var adapter = this.DbDriver.CreateDataAdapter();
+                        adapter.SelectCommand = command;
+
+                        if (withKey)
+                        {
+                            adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                        }
+
+                        DataSet dataSet = new DataSet();
+                        dataSet.Locale = CultureInfo.CurrentCulture;
+                        adapter.Fill(dataSet);
+
+                        return dataSet;
+                    });
+
+                    this.CommandCompleted();
+
+                    return result;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Don't re-wrap Operation Canceled exceptions
+                throw;
+            }
+            catch (MicroLiteException)
+            {
+                // Don't re-wrap MicroLite exceptions
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new MicroLiteException(e.Message, e);
+            }
+        }
+
+        public Task<DataTable> DataTableAsync(SqlQuery sqlQuery, bool withKey)
+        {
+            return this.DataTableAsync(sqlQuery, withKey, CancellationToken.None);
+        }
+
+        public async Task<DataTable> DataTableAsync(SqlQuery sqlQuery, bool withKey, CancellationToken cancellationToken)
+        {
+            this.ThrowIfDisposed();
+
+            if (sqlQuery == null)
+            {
+                throw new ArgumentNullException("sqlQuery");
+            }
+
+            try
+            {
+                using (var command = (DbCommand)this.CreateCommand(sqlQuery))
+                {
+                    var result = await Task.Run<DataTable>(() =>
+                    {
+                        var adapter = this.DbDriver.CreateDataAdapter();
+                        adapter.SelectCommand = command;
+
+                        if (withKey)
+                        {
+                            adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                        }
+
+                        DataTable dataTable = new DataTable();
+                        dataTable.Locale = CultureInfo.CurrentCulture;
+                        adapter.Fill(dataTable);
+
+                        return dataTable;
+                    });
+
+                    this.CommandCompleted();
+
+                    return result;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Don't re-wrap Operation Canceled exceptions
+                throw;
+            }
+            catch (MicroLiteException)
+            {
+                // Don't re-wrap MicroLite exceptions
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new MicroLiteException(e.Message, e);
+            }
         }
     }
 

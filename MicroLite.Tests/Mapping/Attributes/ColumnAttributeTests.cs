@@ -1,7 +1,7 @@
 ﻿namespace MicroLite.Tests.Mapping.Attributes
 {
     using System.Data;
-    using MicroLite.Mapping.Attributes;
+    using MicroLite.Mapping;
     using Xunit;
 
     /// <summary>

@@ -126,6 +126,15 @@
   <data name="DbDriver_ArgumentsCountMismatch" xml:space="preserve">
     <value>The number of parameters in the SQL statement and the number of specified parameter arguments should match. However '{0}' parameters used in the SQL statement and '{1}' parameter arguments were specified.</value>
   </data>
+  <data name="DbDriver_MoreValuesThanParameters" xml:space="preserve">
+    <value>The number of values is greater than number of command parameters</value>
+  </data>
+  <data name="DbDriver_ParameterIndexOutOfRange" xml:space="preserve">
+    <value>Index of command parameter is out of range</value>
+  </data>
+  <data name="DefaultMappingConvention_NoTableAttribute" xml:space="preserve">
+    <value>The type '{0}' cannot be used by MicroLite as is not decorated with a TableAttribute for further information about using the Attribute base Mapping, see the wiki or blog</value>
+  </data>
   <data name="ExpandoObjectInfo_NotSupportedReason" xml:space="preserve">
     <value>The 'dynamic' type can only be used for queries where an SqlQuery is supplied, it cannot be used for select by identifier, insert, update or delete.</value>
   </data>
@@ -182,6 +191,9 @@
   </data>
   <data name="Session_IdentifierNotSetForUpdate" xml:space="preserve">
     <value>The object does not have an identifier value set so it cannot be updated</value>
+  </data>
+  <data name="Session_MultipleInsertsNotSupported" xml:space="preserve">
+    <value>Multiple inserts are supported only on DbDriver which supports batched queries</value>
   </data>
   <data name="Session_PagingOptionsMustNotBeNone" xml:space="preserve">
     <value>The paging options must contain a count and offset, use the PagingOptions.ForPage or PagingOptions.SkipTake methods to specify the values</value>
